@@ -103,4 +103,87 @@ public class Trees {
         }
         return depth;
     }
+
+    public int[][] merge(int[][] intervals) {
+        if (intervals.length <= 1) return intervals;
+
+        // Step 1: Sort intervals by their start values
+        Arrays.sort(intervals, (a, b) -> Integer.compare(a[0], b[0]));
+
+        // Step 2: Use a list to collect merged intervals
+        List<int[]> merged = new ArrayList<>();
+
+        // Initialize the first interval as the current interval
+        int[] currentInterval = intervals[0];
+        merged.add(currentInterval);
+
+        // Step 3: Iterate through intervals and merge
+        for (int[] interval : intervals) {
+            int currentStart = currentInterval[0];
+            int currentEnd = currentInterval[1];
+            int nextStart = interval[0];
+            int nextEnd = interval[1];
+
+            if (currentEnd >= nextStart) { // Overlapping intervals
+                // Merge by extending the end
+                currentInterval[1] = Math.max(currentEnd, nextEnd);
+            } else {
+                // No overlap, add the next interval as a new interval
+                currentInterval = interval;
+                merged.add(currentInterval);
+            }
+        }
+
+        // Convert merged list to array
+        return merged.toArray(new int[merged.size()][]);
+    }
+
+    public void sortColors(int[] nums) {
+        int current = 0;
+        int low = 0;
+        int high = nums.length - 1;
+
+        while(current <= high) {
+            if(nums[current] == 0) {
+                int temp = nums[low];
+                nums[low] = nums[current];
+                nums[current] = temp;
+                low++;
+                current++;
+            } else if(nums[current] == 2) {
+                int temp = nums[high];
+                nums[high] = nums[current];
+                nums[current] = temp;
+                high--;
+            } else {
+                current++;
+            }
+        }
+    }
+
+    public void sortColorsCounting(int[] nums) {
+        // Step 1: Count occurrences
+        int[] count = new int[3];
+        for (int num : nums) {
+            count[num]++;
+        }
+
+        // Step 2: Overwrite the original array
+        int index = 0;
+
+        // Fill with 0s
+        for (int i = 0; i < count[0]; i++) {
+            nums[index++] = 0;
+        }
+
+        // Fill with 1s
+        for (int i = 0; i < count[1]; i++) {
+            nums[index++] = 1;
+        }
+
+        // Fill with 2s
+        for (int i = 0; i < count[2]; i++) {
+            nums[index++] = 2;
+        }
+    }
 }
