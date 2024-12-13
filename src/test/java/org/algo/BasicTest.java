@@ -12,6 +12,10 @@ class BasicTest {
     void test() {
         int[] input = {3, 2, 4};
         int[] result = basic.twoSum(input, 6);
+
+        int a = 9;
+
+        System.out.println(9/2);
     }
 
 

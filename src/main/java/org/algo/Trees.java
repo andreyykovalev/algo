@@ -49,9 +49,9 @@ public class Trees {
 
         TreeNode current = root;
 
-        while(current != null || !stack.isEmpty()) {
+        while (current != null || !stack.isEmpty()) {
 
-            while(current != null) {
+            while (current != null) {
                 stack.push(current);
                 current = current.left;
             }
@@ -72,12 +72,12 @@ public class Trees {
     }
 
     public int maxDepth(TreeNode root) {
-        if(root == null) return 0;
+        if (root == null) return 0;
         return doDfs(root);
     }
 
     private int doDfs(TreeNode root) {
-        if(root == null) return 1;
+        if (root == null) return 1;
 
         int maxLeft = doDfs(root.left);
         int maxRight = doDfs(root.right);
@@ -86,16 +86,16 @@ public class Trees {
     }
 
     public int maxDepthBfs(TreeNode root) {
-        if(root == null) return 0;
+        if (root == null) return 0;
         Queue<TreeNode> queue = new LinkedList<>();
         queue.add(root);
         int depth = 0;
 
-        while(!queue.isEmpty()) {
+        while (!queue.isEmpty()) {
             int leavesCount = queue.size();
             depth++;
 
-            for(int i = 0; i < leavesCount; i++) {
+            for (int i = 0; i < leavesCount; i++) {
                 TreeNode current = queue.poll();
                 if (current.left != null) queue.add(current.left);
                 if (current.right != null) queue.add(current.right);
@@ -143,14 +143,14 @@ public class Trees {
         int low = 0;
         int high = nums.length - 1;
 
-        while(current <= high) {
-            if(nums[current] == 0) {
+        while (current <= high) {
+            if (nums[current] == 0) {
                 int temp = nums[low];
                 nums[low] = nums[current];
                 nums[current] = temp;
                 low++;
                 current++;
-            } else if(nums[current] == 2) {
+            } else if (nums[current] == 2) {
                 int temp = nums[high];
                 nums[high] = nums[current];
                 nums[current] = temp;
@@ -184,6 +184,31 @@ public class Trees {
         // Fill with 2s
         for (int i = 0; i < count[2]; i++) {
             nums[index++] = 2;
+        }
+    }
+
+    public void mergeSortedArrays(int[] nums1, int m, int[] nums2, int n) {
+        int i = m - 1;
+        int j = n - 1;
+        int k = m + n - 1;
+
+
+        while (i >= 0 && j >= 0) {
+            if (nums1[i] > nums2[j]) {
+                nums1[k] = nums1[i];
+                i--;
+            } else {
+                nums1[k] = nums2[j];
+                j--;
+            }
+            k--;
+        }
+
+        // Copy remaining elements from nums2 (if any)
+        while (j >= 0) {
+            nums1[k] = nums2[j];
+            j--;
+            k--;
         }
     }
 }
