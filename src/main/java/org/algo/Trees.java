@@ -211,4 +211,63 @@ public class Trees {
             k--;
         }
     }
+
+    public int[] sortArray(int[] nums) {
+        mergeSort(nums);
+        return nums;
+    }
+
+    private void mergeSort(int[] nums) {
+        int inputLength = nums.length;
+
+        if(inputLength < 2) return;
+
+        int midArrayIndex = inputLength / 2;
+
+        int[] leftHalfArray = new int[midArrayIndex];
+        int[] rightHalfArray = new int[inputLength - midArrayIndex];
+
+        for(int i = 0; i < midArrayIndex; i++) {
+            leftHalfArray[i] = nums[i];
+        }
+
+        for(int i = midArrayIndex; i < inputLength; i++) {
+            rightHalfArray[i - midArrayIndex] = nums[i];
+        }
+
+        mergeSort(leftHalfArray);
+        mergeSort(rightHalfArray);
+
+        merge(nums, leftHalfArray, rightHalfArray);
+    }
+
+    private static void merge(int[] inputArray, int[] leftHalf, int[] rightHalf) {
+        int leftSize = leftHalf.length;
+        int rightSize = rightHalf.length;
+
+        int i = 0, j = 0, k = 0;
+
+        while(i < leftSize && j < rightSize) {
+            if(leftHalf[i] <= rightHalf[j]) {
+                inputArray[k] = leftHalf[i];
+                i++;
+            } else {
+                inputArray[k] = rightHalf[j];
+                j++;
+            }
+            k++;
+        }
+
+        while(i < leftSize) {
+            inputArray[k] = leftHalf[i];
+            k++;
+            i++;
+        }
+
+        while(j < rightSize) {
+            inputArray[k] = rightHalf[j];
+            k++;
+            j++;
+        }
+    }
 }
