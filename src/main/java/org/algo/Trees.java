@@ -324,4 +324,53 @@ public class Trees {
         array[index1] = array[index2];
         array[index2] = temp;
     }
+
+    public String largestNumber(int[] nums) {
+        // Convert the array of integers to an array of strings
+        String[] strNums = Arrays.stream(nums)
+                .mapToObj(String::valueOf)
+                .toArray(String[]::new);
+
+        // Sort the strings based on the custom comparator
+        Arrays.sort(strNums, new Comparator<String>() {
+            @Override
+            public int compare(String a, String b) {
+                String order1 = a + b;
+                String order2 = b + a;
+                // Descending order
+                return order2.compareTo(order1);
+            }
+        });
+
+        // Handle the edge case where all numbers are zero
+        if (strNums[0].equals("0")) {
+            return "0";
+        }
+
+        // Build the largest number string
+        StringBuilder sb = new StringBuilder();
+        for (String str : strNums) {
+            sb.append(str);
+        }
+
+        return sb.toString();
+    }
+
+    public int search(int[] nums, int target) {
+        return search(nums, target, 0, nums.length - 1);
+    }
+
+    public int search(int[] nums, int target, int low, int high) {
+        int mid = (low + high) / 2;
+
+        if(high < low) return -1;
+
+        if(nums[mid] == target) {
+            return mid;
+        } else if(target < nums[mid]) {
+            return search(nums, target, low, mid - 1);
+        } else {
+            return search(nums, target, mid + 1, high);
+        }
+    }
 }
