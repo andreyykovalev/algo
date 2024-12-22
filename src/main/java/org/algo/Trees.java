@@ -421,4 +421,54 @@ public class Trees {
             return -1; // Target not found
         }
     }
+
+    public int[] dailyTemperatures(int[] temperatures) {
+        int n = temperatures.length;
+        int[] result = new int[n];
+        Stack<Integer> stack = new Stack<>(); // To store indices of temperatures
+
+        for (int i = 0; i < n; i++) {
+            // While stack is not empty and current temperature is greater than the temperature at the index stored at the top of the stack
+            while (!stack.isEmpty() && temperatures[i] > temperatures[stack.peek()]) {
+                int index = stack.pop(); // Get the index of the day
+                result[index] = i - index; // Calculate the number of days until a warmer temperature
+            }
+            stack.push(i); // Push the current index onto the stack
+        }
+
+        // Any remaining indices in the stack have no warmer days, so their result will remain 0
+        return result;
+    }
+
+    public int[] maxSlidingWindow(int[] nums, int k) {
+        if (nums == null || nums.length == 0 || k <= 0) {
+            return new int[0];
+        }
+
+        int n = nums.length;
+        int[] result = new int[n - k + 1];
+        Deque<Integer> deque = new LinkedList<>(); // Monotonic queue
+
+        for (int i = 0; i < n; i++) {
+            // Remove indices that are out of the current window
+            while (!deque.isEmpty() && deque.peekFirst() < i - k + 1) {
+                deque.pollFirst();
+            }
+
+            // Remove smaller elements from the back of the deque
+            while (!deque.isEmpty() && nums[deque.peekLast()] < nums[i]) {
+                deque.pollLast();
+            }
+
+            // Add the current element's index to the deque
+            deque.offerLast(i);
+
+            // Add the maximum for the current window to the result
+            if (i >= k - 1) {
+                result[i - k + 1] = nums[deque.peekFirst()];
+            }
+        }
+
+        return result;
+    }
 }
