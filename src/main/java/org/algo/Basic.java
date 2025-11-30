@@ -1,6 +1,8 @@
 package org.algo;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Basic {
 
@@ -17,6 +19,26 @@ public class Basic {
             }
         }
         return new int[0];
+    }
+
+    public List<List<String>> groupAnagrams2(String[] strs) {
+        //"eat", "tae", "tea", "art" -> ["eat", "tae", "tea"], ["art"]
+
+        Map<String, List<String>> map = new HashMap<>();
+
+        for (String str : strs) {
+            char[] sortedStr = str.toCharArray();
+            Arrays.sort(sortedStr);
+
+            if (!map.containsKey(new String(sortedStr))) {
+                List<String> anagramGroup = new ArrayList<>();
+                anagramGroup.add(str);
+                map.put(new String(sortedStr), anagramGroup);
+            } else {
+                map.get(new String(sortedStr)).add(str);
+            }
+        }
+        return new ArrayList<>(map.values());
     }
 
     public int lengthOfLongestSubstring(String s) {
@@ -52,7 +74,16 @@ public class Basic {
     }
 
     public static void main(String[] args) {
-        System.out.println("asd".charAt(1));
+        Integer i = Stream.of(3, 5, 4, 2, 6, 2)
+                .collect(Collectors.groupingBy(key -> key, Collectors.counting()))
+                .entrySet()
+                .stream()
+                .max((entry1, entry2) -> entry1.getValue().compareTo(entry2.getValue()))
+                .map((entry1) -> entry1.getKey())
+                .orElse(null);
+
+        System.out.println(i);
+
     }
 
 
@@ -154,13 +185,13 @@ public class Basic {
     public List<List<String>> groupAnagrams(String[] strs) {
         Map<String, List<String>> map = new HashMap<>();
 
-        for(String str: strs) {
+        for (String str : strs) {
             char[] strArr = str.toCharArray();
             Arrays.sort(strArr);
 
             String sortedStr = new String(strArr);
 
-            if(!map.containsKey(sortedStr)) {
+            if (!map.containsKey(sortedStr)) {
                 List<String> anagramGroup = new ArrayList<>();
                 anagramGroup.add(str);
                 map.put(sortedStr, anagramGroup);
@@ -198,6 +229,59 @@ public class Basic {
         }
 
         return new ArrayList<>(map.values());
+    }
+
+    public String longestCommonPrefix(String[] strs) {
+//        Input: strs = ["flower","flow","flight"]
+//        Output: "fl"
+
+        String prefix = strs[0];
+        for (int i = 1; i < strs.length; i++) {
+            while (!strs[i].startsWith(prefix)) {
+                prefix = prefix.substring(0, prefix.length() - 1);
+                if (prefix.isEmpty()) {
+                    return "";
+                }
+            }
+        }
+        return prefix;
+    }
+
+    public String intToRoman(int num) {
+        int[] values = new int[]{1000,900,500,400,100,90,50,40,10,9,5,4,1};
+        String[]sympols = new String[]{"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < values.length; i++) {
+
+            while(num > values[i]) {
+                num -= values[i];
+                sb.append(sympols[i]);
+            }
+        }
+        return sb.toString();
+
+    }
+
+    public String longestCommonPrefixVertical(String[] strs) {
+//        Input: strs = ["flower","flow","flight"]
+//        Output: "fl"
+
+        StringBuilder sb = new StringBuilder();
+
+        String firstStr = strs[0];
+
+        for(int i = 0; i < strs[0].length(); i++) {
+            char c = firstStr.charAt(i);
+
+            for(int j = 1; j < strs.length; j++) {
+                if(i >= strs[j].length() || c != strs[j].charAt(i)) {
+                    return sb.toString();
+                }
+            }
+            sb.append(c);
+        }
+        return sb.toString();
     }
 
     public int[] buildPrefixSumArray(int nums[]) {
@@ -292,12 +376,12 @@ public class Basic {
     }
 
     public ListNode removeNthFromEnd(ListNode head, int n) {
-        if(head == null) return head;
+        if (head == null) return head;
 
         int count = 0;
 
         ListNode current = head;
-        while(current != null) {
+        while (current != null) {
             current = current.next;
             count++;
         }
@@ -310,8 +394,8 @@ public class Basic {
 
         current = head;
         ListNode newHead = current;
-        for(int i = 0; i < count; i++) {
-            if(i == nodeToRemoveIndex - 1) {
+        for (int i = 0; i < count; i++) {
+            if (i == nodeToRemoveIndex - 1) {
                 current.next = current.next.next;
                 break;
             }
@@ -339,14 +423,132 @@ public class Basic {
         ListNode slow = head;
         ListNode fast = head;
 
-        while (fast!= null && fast.next != null) {
+        while (fast != null && fast.next != null) {
             slow = slow.next;
             fast = fast.next.next;
+            char c = '2';
+            Integer.parseInt(Character.toString(c));
 
             if (slow == fast) {
                 return true;
             }
         }
         return false;
+    }
+
+    public boolean isHappy(int n) {
+        Set<Integer> seenNumbers = new HashSet<>();
+
+        while(true) {
+            int temp = n;
+            int newNum = 0;
+            while(temp > 0) {
+                int digit = temp % 10;
+                newNum +=  digit * digit;
+                temp = temp / 10;
+            }
+            if(newNum == 1) {
+                return true;
+            }
+            if(seenNumbers.contains(newNum)) {
+                return false;
+            } else {
+                seenNumbers.add(newNum);
+            }
+            n = newNum;
+        }
+    }
+
+    //aerbbbet -> 2 (bb)
+    public int longestRepeatingSubstring(String s) {
+        if (s.isEmpty()) return 0;
+
+        char[] sArr = s.toCharArray();
+        int max = 1;
+        int count = 1;
+
+        for (int i = 0; i < s.length() - 1; i++) {
+            char current = sArr[i];
+            char next = sArr[i + 1];
+
+            if (current == next) {
+                count++;
+                max = Math.max(count, max);
+            } else {
+                count = 1;
+            }
+        }
+        return max;
+    }
+
+    public boolean checkInclusion(String s1, String s2) {
+        if (s1.length() > s2.length()) return false;
+
+        Map<Character, Integer> need = new HashMap<>();
+
+        for (char c : s1.toCharArray()) {
+            need.put(c, need.getOrDefault(c, 0) + 1);
+        }
+
+        Map<Character, Integer> window = new HashMap<>();
+        int len = s1.length();
+
+        for (int i = 0; i < s2.length(); i++) {
+            char c = s2.charAt(i);
+            window.put(c, window.getOrDefault(c, 0) + 1);
+
+            if (i >= len) {
+                char rm = s2.charAt(i - len);
+                window.put(rm, window.get(rm) - 1);
+                if (window.get(rm) == 0) window.remove(rm);
+            }
+            if (window.equals(need)) return true;
+        }
+        return false;
+    }
+
+    public boolean canConstruct(String ransomNote, String magazine) {
+        Map<Character, Integer> magazineMap = new HashMap<>();
+
+        for (char c : magazine.toCharArray()) {
+            magazineMap.put(c, magazineMap.getOrDefault(c, 0) + 1);
+        }
+
+        for (int i = 0; i < ransomNote.length(); i++) {
+            char c = ransomNote.charAt(i);
+
+            if (!magazineMap.containsKey(c)) {
+                return false;
+            } else {
+                magazineMap.put(c, magazineMap.get(i) - 1);
+                if (magazineMap.get(c) == 0) ;
+                magazineMap.remove(c);
+            }
+        }
+        return true;
+    }
+
+    public boolean isIsomorphic(String s, String t) {
+        if (s.length() != t.length()) return false;
+        //Input: s = "egg", t = "add"
+        // egg -> add
+        // e -> a
+        // g -> d
+
+        Map<Character, Integer> sMap = new HashMap<>();
+        Map<Character, Integer> tMap = new HashMap<>();
+
+        for (int i = 0; i < s.length(); i++) {
+            if (!sMap.containsKey(s.charAt(i))) {
+                sMap.put(s.charAt(i), i);
+            }
+            if (!tMap.containsKey(t.charAt(i))) {
+                tMap.put(t.charAt(i), i);
+            }
+            if (sMap.get(s.charAt(i)) != tMap.get(t.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -62,4 +62,12 @@ class BasicTest {
         Basic.ListNode result = basic.removeNthFromEnd(listNode1, 2);
         System.out.println();
     }
+
+    @Test
+    public void longestRepeatingSubstring() {
+        int result = basic.longestRepeatingSubstring("aerbbbet");
+
+        assertEquals(3, result);
+    }
+
 }
