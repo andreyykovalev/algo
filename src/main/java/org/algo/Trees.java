@@ -471,4 +471,27 @@ public class Trees {
 
         return result;
     }
+
+    public int maxDepth(TreeNode root) {
+        if (root == null) return 0;
+
+        Queue<TreeNode> q = new LinkedList<>();
+
+        q.add(root);
+        int level = 0;
+
+        while(!q.isEmpty()) {
+
+            int length = q.size();
+            for (int i = 0; i < length; i++) {
+                TreeNode current = q.poll();
+                if (current != null) {
+                    if (current.left != null) q.add(current.left);
+                    if (current.right != null) q.add(current.right);
+                }
+            }
+            level++;
+        }
+        return level;
+    }
 }

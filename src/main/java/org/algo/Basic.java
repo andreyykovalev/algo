@@ -21,6 +21,66 @@ public class Basic {
         return new int[0];
     }
 
+    public boolean canAttendMeetings(int[][] intervals) {
+
+        if (intervals == null || intervals.length == 0) {
+            return true;
+        }
+
+        // Sort by start time
+        Arrays.sort(intervals, new Comparator<int[]>() {
+            @Override
+            public int compare(int[] o1, int[] o2) {
+                return o1[0] - o2[0];
+            }
+        });
+
+        for (int i = 1; i < intervals.length; i++) {
+            // If current meeting starts before previous ends → overlap
+            if (intervals[i][0] < intervals[i - 1][1]) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public int[][] merge(int[][] intervals) {
+
+        if (intervals == null || intervals.length == 0) {
+            return new int[0][];
+        }
+
+        // 1️⃣ Sort by start time
+        Arrays.sort(intervals, (a, b) -> Integer.compare(a[0], b[0]));
+
+        List<int[]> result = new ArrayList<>();
+
+        int start = intervals[0][0];
+        int end = intervals[0][1];
+
+
+        for(int i = 1; i < intervals.length; i++) {
+
+            int currentStart = intervals[i][0];
+            int currentEnd = intervals[i][1];
+
+            //merge if overlap
+            if(currentStart <= end) {
+                end = Math.max(end, currentEnd);
+            } else {
+                result.add(new int[]{start, end});
+                start = currentStart;
+                end = currentEnd;
+            }
+        }
+
+        result.add(new int[]{start, end});
+
+
+        return result.toArray(new int[result.size()][]);
+    }
+
     public List<List<String>> groupAnagrams2(String[] strs) {
         //"eat", "tae", "tea", "art" -> ["eat", "tae", "tea"], ["art"]
 
@@ -248,13 +308,13 @@ public class Basic {
     }
 
     public String intToRoman(int num) {
-        int[] values = new int[]{1000,900,500,400,100,90,50,40,10,9,5,4,1};
-        String[]sympols = new String[]{"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+        int[] values = new int[]{1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+        String[] sympols = new String[]{"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
 
         StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < values.length; i++) {
+        for (int i = 0; i < values.length; i++) {
 
-            while(num > values[i]) {
+            while (num > values[i]) {
                 num -= values[i];
                 sb.append(sympols[i]);
             }
@@ -271,11 +331,13 @@ public class Basic {
 
         String firstStr = strs[0];
 
-        for(int i = 0; i < strs[0].length(); i++) {
+        //letters
+        for (int i = 0; i < strs[0].length(); i++) {
             char c = firstStr.charAt(i);
 
-            for(int j = 1; j < strs.length; j++) {
-                if(i >= strs[j].length() || c != strs[j].charAt(i)) {
+            //words
+            for (int j = 1; j < strs.length; j++) {
+                if (i >= strs[j].length() || c != strs[j].charAt(i)) {
                     return sb.toString();
                 }
             }
@@ -439,18 +501,19 @@ public class Basic {
     public boolean isHappy(int n) {
         Set<Integer> seenNumbers = new HashSet<>();
 
-        while(true) {
+        while (true) {
             int temp = n;
             int newNum = 0;
-            while(temp > 0) {
+            while (temp > 0) {
                 int digit = temp % 10;
-                newNum +=  digit * digit;
+                newNum += digit * digit;
                 temp = temp / 10;
             }
-            if(newNum == 1) {
+
+            if (newNum == 1) {
                 return true;
             }
-            if(seenNumbers.contains(newNum)) {
+            if (seenNumbers.contains(newNum)) {
                 return false;
             } else {
                 seenNumbers.add(newNum);
@@ -547,6 +610,67 @@ public class Basic {
             }
             if (sMap.get(s.charAt(i)) != tMap.get(t.charAt(i))) {
                 return false;
+            }
+        }
+        return true;
+    }
+
+    //a = ["pom", "pim"]
+    //b = ["99", "1234"]
+    //p = "1"
+    public String solution(String[] A, String[] B, String P) {
+        String result = null;
+        for (int i = 0; i < A.length; i++) {
+            if (B[i].contains(P)) {
+                if (result == null || A[i].compareTo(result) < 0) {
+                    result = A[i];
+                }
+            }
+        }
+        return result == null ? "NO CONTACT" : result;
+    }
+
+    public int sum(int[] arr) {
+        int sum = 0;
+
+        for (int i = 0; i < arr.length; i++) {
+            int curr = arr[i];
+            if (Math.abs(curr) > 9 && Math.abs(curr) < 100) {
+                sum += curr;
+            }
+        }
+        return sum;
+    }
+
+    public boolean lemonadeChange(int[] bills) {
+        //coin to quantity
+        Map<Integer, Integer> map = new HashMap<>();
+
+        for(int i = 0; i < bills.length; i++) {
+            int curr = bills[i];
+
+            if(curr == 5) {
+                map.put(curr, map.getOrDefault(curr, 0) + 1);
+            } else if (curr == 10) {
+                map.put(curr, map.getOrDefault(curr, 0) + 1);
+                if(map.getOrDefault(5, 0) <= 0) {
+                    return false;
+                } else {
+                    map.put(5, map.get(5) - 1);
+                }
+            } else if (curr == 20) {
+                map.put(curr, map.getOrDefault(curr, 0) + 1);
+                int fives = map.getOrDefault(5, 0);
+                int tens = map.getOrDefault(10, 0);
+
+                if (tens > 0 && fives > 0) {
+                    map.put(10, tens - 1);
+                    map.put(5, fives - 1);
+                } else if (fives >= 3) {
+                    map.put(5, fives - 3);
+                } else {
+                    return false;
+                }
             }
         }
         return true;
