@@ -2,6 +2,7 @@ package org.algo;
 
 import javax.swing.tree.TreeNode;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Trees {
     public static class TreeNode {
@@ -472,6 +473,35 @@ public class Trees {
         return result;
     }
 
+    boolean isSameTree = true;
+
+    public boolean isSameTree(TreeNode p, TreeNode q) {
+        dfsHelper(p, q);
+        return isSameTree;
+    }
+
+    private void dfsHelper(TreeNode p, TreeNode q) {
+        if (p == null && q != null) {
+            isSameTree = false;
+            return;
+        }
+        if (q == null && p != null) {
+            isSameTree = false;
+            return;
+        }
+        if (p == null && q == null) {
+            return;
+        }
+
+        if (p.val != q.val) {
+            isSameTree = false;
+            return;
+        }
+
+        dfsHelper(p.left, q.left);
+        dfsHelper(p.right, q.right);
+    }
+
     public int maxDepth(TreeNode root) {
         if (root == null) return 0;
 
@@ -480,7 +510,7 @@ public class Trees {
         q.add(root);
         int level = 0;
 
-        while(!q.isEmpty()) {
+        while (!q.isEmpty()) {
 
             int length = q.size();
             for (int i = 0; i < length; i++) {
@@ -493,5 +523,91 @@ public class Trees {
             level++;
         }
         return level;
+    }
+
+    public TreeNode invertTree(TreeNode root) {
+        if (root == null) return null;
+        preOrder(root);
+        return root;
+    }
+
+    void preOrder(TreeNode root) {
+
+        TreeNode temp = root.left;
+        root.left = root.right;
+        root.right = temp;
+
+        preOrder(root.left);
+        preOrder(root.right);
+    }
+
+
+
+
+
+
+    public int[] topKFrequent(int[] nums, int k) {
+        //[1,1,1,2,2,3], k = 2
+
+        //1 : 3
+        //2: 2
+        //3: 1
+
+        //sort by value
+
+        //return first k
+
+        //O(N log(N))
+        //O(N)
+
+        Map<Integer, Integer> valueToCountMap = new HashMap<>();
+
+        for(int i = 0; i < nums.length; i++) {
+            valueToCountMap.put(nums[i], valueToCountMap.getOrDefault(nums[i], 0) + 1);
+        }
+
+        List<Integer> collect = valueToCountMap.entrySet().stream().sorted(Comparator.comparingInt(value -> value.getValue()).reversed()).limit(k).flatMap(Map.Entry::getKey).collect(Collectors.toList());
+        return (int[]) collect.stream().toArray();
+
+    }
+
+
+
+
+    public boolean isSymmetric(TreeNode root) {
+        if(root == null) return true;
+
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.add(root);
+
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+
+            for (int i = 0; i < size; i++) {
+                TreeNode current = queue.poll();
+
+                TreeNode left = current.left;
+                TreeNode right = current.right;
+
+                if(left == null && right == null) {
+                    return true;
+                }
+
+                if(left == null || right == null) {
+                    return false;
+                }
+
+                if(current.left.left != current.right.right) {
+                    return false;
+                }
+                if(current.right.left != current.left.right) {
+                    return false;
+                }
+
+                queue.add(left);
+                queue.add(right);
+            }
+        }
+        return true;
     }
 }

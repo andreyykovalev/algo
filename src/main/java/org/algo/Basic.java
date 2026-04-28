@@ -7,16 +7,17 @@ import java.util.stream.Stream;
 public class Basic {
 
     public int[] twoSum(int[] nums, int target) {
-
         Map<Integer, Integer> map = new HashMap<>();
 
         for (int i = 0; i < nums.length; i++) {
+            int complement = target - nums[i];
 
-            if (map.containsKey(target - nums[i])) {
-                return new int[]{i, map.get(target - nums[i])};
-            } else {
-                map.put(target - nums[i], i);
+            if (map.containsKey(complement)) {
+                return new int[] { map.get(complement), i };
             }
+
+
+            map.put(nums[i], i);
         }
         return new int[0];
     }
@@ -435,6 +436,41 @@ public class Basic {
         }
 
         return prev;
+    }
+
+    public int lastStoneWeight(int[] stones) {
+        //[2,7,4,1,8,1]
+
+        //max heap (binary tree) :
+        //1.heap.poll() -> biggest elem "a"
+        //2.heap.poll() -> 2d biggest "b"
+        //3. compare a and b
+        //4a. if(a == b) continue (both are destroyed)
+        //4b. a = a - b -> heap.offer(a);
+
+        //while(heap.isEmpty or heap size == 1)
+
+        //O(N * log n);
+
+        PriorityQueue<Integer> maxHeap = new PriorityQueue<>(Comparator.reverseOrder());
+
+
+        for(int i = 0; i < stones.length; i++) {
+            maxHeap.offer(stones[i]);
+        }
+
+        while (maxHeap.size() > 1) {
+            int a = maxHeap.poll();
+            int b = maxHeap.poll();
+
+            if(Objects.equals(a, b)) continue;
+
+            int newStone = a - b;
+
+            maxHeap.offer(newStone);
+        }
+
+        return maxHeap.isEmpty() ? 0: maxHeap.poll();
     }
 
     public ListNode removeNthFromEnd(ListNode head, int n) {
